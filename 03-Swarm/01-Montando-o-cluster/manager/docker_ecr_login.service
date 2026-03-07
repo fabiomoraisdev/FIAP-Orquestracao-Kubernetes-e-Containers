@@ -6,9 +6,10 @@ Requires=docker.service
 
 [Service]
 Type=oneshot
+RemainAfterExit=yes
 User=root
 Group=root
 ExecStart=/etc/systemd/system/ecr-login.sh
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target

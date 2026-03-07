@@ -24,7 +24,10 @@ fi
 sudo systemctl enable docker
 sudo systemctl start docker
 sudo systemctl is-active --quiet docker
-sudo usermod -a -G docker ec2-user
+
+if id -u ec2-user >/dev/null 2>&1; then
+  sudo usermod -aG docker ec2-user
+fi
 
 for i in {1..20}; do
   if docker info >/dev/null 2>&1; then

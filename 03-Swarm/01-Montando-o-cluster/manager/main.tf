@@ -1,19 +1,19 @@
 # Specify the provider and access details
 provider "aws" {
-  region = "${var.aws_region}"
+  region = var.aws_region
 }
 
 data "aws_ssm_parameter" "al2023_ami" {
-  name = "${var.ami_ssm_parameter}"
+  name = var.ami_ssm_parameter
 }
 
 resource "aws_instance" "web" {
-  instance_type = "t2.micro"
-  ami           = "${data.aws_ssm_parameter.al2023_ami.value}"
+  instance_type        = "t2.micro"
+  ami                  = data.aws_ssm_parameter.al2023_ami.value
   iam_instance_profile = "LabInstanceProfile"
 
   vpc_security_group_ids = ["${aws_security_group.allow-ssh.id}"]
-  key_name               = "${var.KEY_NAME}"
+  key_name               = var.KEY_NAME
 
   provisioner "file" {
     source      = "script.sh"
@@ -39,15 +39,16 @@ resource "aws_instance" "web" {
       "sudo systemctl daemon-reload",
       "sudo systemctl enable docker_ecr_login",
       "sudo systemctl restart docker_ecr_login",
-      "sudo systemctl --no-pager --full status docker_ecr_login"
+      "sudo systemctl --no-pager --full status docker_ecr_login || true",
+      "if sudo systemctl is-failed --quiet docker_ecr_login; then sudo journalctl -u docker_ecr_login --no-pager -n 100; exit 1; fi"
 
     ]
   }
 
   connection {
-    user        = "${var.INSTANCE_USERNAME}"
-    private_key = "${file("${var.PATH_TO_KEY}")}"
-    host = "${self.public_dns}"
+    user        = var.INSTANCE_USERNAME
+    private_key = file("${var.PATH_TO_KEY}")
+    host        = self.public_dns
   }
 
   tags = {
