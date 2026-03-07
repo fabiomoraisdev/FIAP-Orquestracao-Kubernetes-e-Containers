@@ -5,10 +5,10 @@ REGION="us-east-1"
 
 if command -v dnf >/dev/null 2>&1; then
   sudo dnf update -y
-  sudo dnf install -y docker jq unzip
+  sudo dnf install -y docker jq unzip git
 else
   sudo yum update -y
-  sudo yum install -y docker jq unzip
+  sudo yum install -y docker jq unzip git
 fi
 
 if ! command -v curl >/dev/null 2>&1; then
@@ -25,11 +25,55 @@ sudo systemctl enable docker
 sudo systemctl start docker
 sudo systemctl is-active --quiet docker
 
+sudo tee /usr/local/bin/ensure-docker-access.sh >/dev/null <<'EOF'
+#!/bin/bash
+set -euo pipefail
+
+groupadd -f docker
+
 for user in ec2-user ssm-user; do
   if id -u "$user" >/dev/null 2>&1; then
-    sudo usermod -aG docker "$user"
+    usermod -aG docker "$user"
   fi
 done
+
+if [ -S /var/run/docker.sock ]; then
+  chgrp docker /var/run/docker.sock || true
+  chmod 660 /var/run/docker.sock || true
+fi
+EOF
+sudo chmod +x /usr/local/bin/ensure-docker-access.sh
+
+sudo tee /etc/systemd/system/ensure-docker-access.service >/dev/null <<'EOF'
+[Unit]
+Description=Ensure Docker access for ec2-user and ssm-user
+After=docker.service amazon-ssm-agent.service
+Wants=docker.service amazon-ssm-agent.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/ensure-docker-access.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo tee /etc/systemd/system/ensure-docker-access.timer >/dev/null <<'EOF'
+[Unit]
+Description=Periodically ensure Docker access users
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=1min
+Unit=ensure-docker-access.service
+
+[Install]
+WantedBy=timers.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now ensure-docker-access.service
+sudo systemctl enable --now ensure-docker-access.timer
 
 for i in {1..20}; do
   if docker info >/dev/null 2>&1; then
