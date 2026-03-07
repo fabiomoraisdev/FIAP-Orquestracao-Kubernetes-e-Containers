@@ -25,7 +25,7 @@
       ]
     }
   },
-  "postCreateCommand": "chmod +x /workspaces/FIAP-Orquestracao-Kubernetes-e-Containers/.devcontainer/script.sh && bash /workspaces/FIAP-Microservices-Serverless/.devcontainer/script.sh",
+  "postCreateCommand": "chmod +x /workspaces/FIAP-Orquestracao-Kubernetes-e-Containers/.devcontainer/script.sh && bash /workspaces/FIAP-Orquestracao-Kubernetes-e-Containers/.devcontainer/script.sh",
   "settings": {
     "terminal.integrated.defaultProfile.linux": "bash"
   }

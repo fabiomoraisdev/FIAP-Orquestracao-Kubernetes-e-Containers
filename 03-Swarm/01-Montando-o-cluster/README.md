@@ -88,6 +88,6 @@ aws ssm start-session \
 
    ![](img/11.png)
 
-16. Ao final se executar o comando `docker node ls` verá os 2 nós no cluster.
+1.  Ao final se executar o comando `docker node ls` verá os 2 nós no cluster.
    
    ![](img/10.png)
