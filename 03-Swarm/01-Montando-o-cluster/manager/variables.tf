@@ -3,13 +3,9 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "aws_amis" {
-  type = map(string)
-  default = {
-    us-east-1 = "ami-03eb6185d756497f8"
-    us-west-2 = "ami-06b94666"
-    eu-west-1 = "ami-844e0bf7"
-  }
+variable "ami_ssm_parameter" {
+  description = "Public SSM parameter for the latest Amazon Linux AMI"
+  default     = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
 }
 
 variable "KEY_NAME" {

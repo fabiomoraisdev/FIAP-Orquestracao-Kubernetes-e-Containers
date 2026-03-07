@@ -9,7 +9,7 @@ git reset --hard && git pull origin master
 ```
 2. Primeiramente você irá precisar entrar na pasta onde está o código responsável por criar o nó master do cluster. Para isso execute o comando abaixo
 
-```  shell
+``` shell
 cd /workspaces/FIAP-Orquestracao-Kubernetes-e-Containers/03-Swarm/01-Montando-o-cluster/manager/
 ```
 
@@ -24,9 +24,14 @@ cd /workspaces/FIAP-Orquestracao-Kubernetes-e-Containers/03-Swarm/01-Montando-o-
    ![](img/7.png)
 
 5. Copie todo o conteúdo da chave SSH e volte para a aba do codespaces.
-6. De volta ao codespaces, execute o comando `code /home/ubuntu/.ssh/vockey.pem`. Esse comando vai abrir uma nova aba no seu IDE.
+6. De volta ao codespaces, execute o comando abaixo. Esse comando vai abrir uma nova aba no seu IDE.
+
+``` shell
+code /home/vscode/.ssh/vockey.pem
+```
+
 7. Cole o conteudo da chave SSH que você copiou anteriormente e salve o arquivo utilizando ctrl + S.
-   
+
    ![](img/8.png)
 
 8. No terminal execute o comando `chmod 400 ~/.ssh/vockey.pem` para dar as permissões corretas para a chave SSH.

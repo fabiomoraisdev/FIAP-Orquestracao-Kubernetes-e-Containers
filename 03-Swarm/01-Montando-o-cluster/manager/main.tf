@@ -3,9 +3,13 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
+data "aws_ssm_parameter" "al2023_ami" {
+  name = "${var.ami_ssm_parameter}"
+}
+
 resource "aws_instance" "web" {
   instance_type = "t2.micro"
-  ami           = "${lookup(var.aws_amis, var.aws_region)}"
+  ami           = "${data.aws_ssm_parameter.al2023_ami.value}"
   iam_instance_profile = "LabInstanceProfile"
 
   vpc_security_group_ids = ["${aws_security_group.allow-ssh.id}"]
