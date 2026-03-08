@@ -8,7 +8,7 @@ data "aws_ssm_parameter" "al2023_ami" {
 }
 
 resource "aws_instance" "web" {
-  instance_type        = "t2.micro"
+  instance_type        = "t2.medium"
   ami                  = data.aws_ssm_parameter.al2023_ami.value
   iam_instance_profile = "LabInstanceProfile"
 
